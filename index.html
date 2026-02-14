@@ -17,49 +17,7 @@
   <script src="https://unpkg.com/dexie/dist/dexie.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
   <script src="https://phoebeboo.github.io/mewoooo/pp.js" defer></script>
-   <!-- === 开始：下载修复补丁 === -->
-<!-- 必须放在 script.js 之前加载 -->
-<script>
-    // 定义一个假的 StreamSaver，欺骗主程序
-    window.streamSaver = {
-        createWriteStream: function(filename) {
-            // 创建一个数组，用来在内存里暂存数据
-            const chunks = [];
-            
-            // 返回一个流对象，让主程序以为它在使用 StreamSaver
-            return new WritableStream({
-                write(chunk) {
-                    // 拦截数据：把数据存到内存数组里，而不是发给 ServiceWorker
-                    chunks.push(chunk);
-                },
-                close() {
-                    // 数据传输结束时，把数组合并成一个大文件(Blob)
-                    const blob = new Blob(chunks, { type: "application/octet-stream" });
-                    
-                    // 创建下载链接
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = filename; // 自动使用原本的文件名（无论是 .json 还是 .zip）
-                    
-                    // 触发下载
-                    document.body.appendChild(a);
-                    a.click();
-                    
-                    // 清理垃圾
-                    setTimeout(() => {
-                        document.body.removeChild(a);
-                        window.URL.revokeObjectURL(url);
-                    }, 1000);
-                },
-                abort(err) {
-                    console.error("下载流出错:", err);
-                }
-            });
-        }
-    };
-</script>
-<!-- === 结束：下载修复补丁 === -->
+  <script src="https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/StreamSaver.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
